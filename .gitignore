@@ -1,0 +1,47 @@
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Local configuration file (sdk.dir, etc.)
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+*.xml
+# Keep inspection profiles if valuable, but usually ignore personal ones
+.idea/inspectionProfiles/
+
+# Gradlew
+# Keep gradlew and wrapper!
+# gradlew
+# gradlew.bat
+# gradle/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Captures
+captures/
+
+# Keystores
+*.jks
+*.keystore
+
+# Google Services
+google-services.json
+
+# Generated
+bin/
+gen/
+out/
+
+# Brain/Agent artifacts (optional, maybe keep for docs?)
+# For a clean source repo, we might exclude them or move them to docs/
+# I'll keep them but usually exclude internal agent logs
+.agent/
+.gemini/
