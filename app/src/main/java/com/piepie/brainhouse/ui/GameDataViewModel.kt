@@ -23,37 +23,68 @@ class GameDataViewModel(application: Application) : AndroidViewModel(application
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
-        // Pre-populate honors if empty
+        // Pre-populate honors and Force Update for Ultraman
         viewModelScope.launch {
-            if (honorDao.getUnlockedHonors().first().isEmpty()) { // Check if empty first
-                val initialHonors = listOf(
-                    // Schulte Honors (Focus/Speed)
-                    Honor(1, "新手的派派", "完成舒尔特 Level 1", R.drawable.sticker_rookie_mouse, unlockCondition = "Schulte Level 1"),
-                    Honor(2, "稳重的派派", "完成舒尔特 Level 2", R.drawable.sticker_steady_turtle, unlockCondition = "Schulte Level 2"),
-                    Honor(3, "好奇的派派", "完成舒尔特 Level 3", R.drawable.sticker_curious_cat, unlockCondition = "Schulte Level 3"),
-                    Honor(4, "活泼的派派", "完成舒尔特 Level 4", R.drawable.sticker_jumping_frog, unlockCondition = "Schulte Level 4"),
-                    Honor(5, "敏捷的派派", "完成舒尔特 Level 5", R.drawable.sticker_quick_rabbit, unlockCondition = "Schulte Level 5"),
-                    Honor(6, "飞翔的派派", "完成舒尔特 Level 6", R.drawable.sticker_flying_falcon, unlockCondition = "Schulte Level 6"),
-                    Honor(7, "锐利的派派", "完成舒尔特 Level 7", R.drawable.sticker_eagle_eye, unlockCondition = "Schulte Level 7"),
-                    Honor(8, "神速的派派", "完成舒尔特 Level 8", R.drawable.sticker_fast_cheetah, unlockCondition = "Schulte Level 8"),
-                    
-                    // Blind Box Honors (Memory)
-                    Honor(9, "贪睡的派派", "完成盲盒 Level 1", R.drawable.sticker_sleepy_koala, unlockCondition = "Blind Box Level 1"),
-                    Honor(10, "快乐的派派", "完成盲盒 Level 2", R.drawable.sticker_happy_puppy, unlockCondition = "Blind Box Level 2"),
-                    Honor(11, "聪明的派派", "完成盲盒 Level 3", R.drawable.sticker_clever_fox, unlockCondition = "Blind Box Level 3"),
-                    Honor(12, "聪慧的派派", "完成盲盒 Level 4", R.drawable.sticker_bright_dolphin, unlockCondition = "Blind Box Level 4"),
-                    Honor(13, "博学的派派", "完成盲盒 Level 5", R.drawable.sticker_wise_elephant, unlockCondition = "Blind Box Level 5"),
-                    Honor(14, "深邃的派派", "完成盲盒 Level 6", R.drawable.sticker_memory_whale, unlockCondition = "Blind Box Level 6"),
-                    Honor(15, "天才的派派", "完成盲盒 Level 7", R.drawable.sticker_genius_monkey, unlockCondition = "Blind Box Level 7"),
-                    Honor(16, "无敌的派派", "完成盲盒 Level 8", R.drawable.sticker_master_dragon, unlockCondition = "Blind Box Level 8"),
-                    
-                    // Special Honors
-                    Honor(17, "初试的派派", "体验自定义模式", R.drawable.sticker_baby_pike, unlockCondition = "Play Custom Mode"),
-                    Honor(18, "坚强的派派", "失败3次继续挑战", R.drawable.sticker_strong_bear, unlockCondition = "Resilience"),
-                    Honor(19, "光速的派派", "5秒内完成挑战", R.drawable.sticker_rocket_pike, unlockCondition = "Super Speed"),
-                    Honor(20, "王者派派", "解锁所有其他荣誉", R.drawable.sticker_king_pike, unlockCondition = "Collection Master")
-                )
-                honorDao.insertHonors(initialHonors)
+            val initialHonors = listOf(
+                // ... (Existing 1-20 kept same) ...
+                // I'll abbreviate 1-20 to save tokens if possible, but replace needs full match.
+                // I'll rewrite the whole list with New Images for 22-26.
+                
+                // Schulte
+                Honor(1, "新手的派派", "完成舒尔特 Level 1", R.drawable.sticker_rookie_mouse, unlockCondition = "Schulte Level 1"),
+                Honor(2, "稳重的派派", "完成舒尔特 Level 2", R.drawable.sticker_steady_turtle, unlockCondition = "Schulte Level 2"),
+                Honor(3, "好奇的派派", "完成舒尔特 Level 3", R.drawable.sticker_curious_cat, unlockCondition = "Schulte Level 3"),
+                Honor(4, "活泼的派派", "完成舒尔特 Level 4", R.drawable.sticker_jumping_frog, unlockCondition = "Schulte Level 4"),
+                Honor(5, "敏捷的派派", "完成舒尔特 Level 5", R.drawable.sticker_quick_rabbit, unlockCondition = "Schulte Level 5"),
+                Honor(6, "飞翔的派派", "完成舒尔特 Level 6", R.drawable.sticker_flying_falcon, unlockCondition = "Schulte Level 6"),
+                Honor(7, "锐利的派派", "完成舒尔特 Level 7", R.drawable.sticker_eagle_eye, unlockCondition = "Schulte Level 7"),
+                Honor(8, "神速的派派", "完成舒尔特 Level 8", R.drawable.sticker_fast_cheetah, unlockCondition = "Schulte Level 8"),
+                
+                // Blind Box
+                Honor(9, "贪睡的派派", "完成盲盒 Level 1", R.drawable.sticker_sleepy_koala, unlockCondition = "Blind Box Level 1"),
+                Honor(10, "快乐的派派", "完成盲盒 Level 2", R.drawable.sticker_happy_puppy, unlockCondition = "Blind Box Level 2"),
+                Honor(11, "聪明的派派", "完成盲盒 Level 3", R.drawable.sticker_clever_fox, unlockCondition = "Blind Box Level 3"),
+                Honor(12, "聪慧的派派", "完成盲盒 Level 4", R.drawable.sticker_bright_dolphin, unlockCondition = "Blind Box Level 4"),
+                Honor(13, "博学的派派", "完成盲盒 Level 5", R.drawable.sticker_wise_elephant, unlockCondition = "Blind Box Level 5"),
+                Honor(14, "深邃的派派", "完成盲盒 Level 6", R.drawable.sticker_memory_whale, unlockCondition = "Blind Box Level 6"),
+                Honor(15, "天才的派派", "完成盲盒 Level 7", R.drawable.sticker_genius_monkey, unlockCondition = "Blind Box Level 7"),
+                Honor(16, "无敌的派派", "完成盲盒 Level 8", R.drawable.sticker_master_dragon, unlockCondition = "Blind Box Level 8"),
+                
+                // Special
+                Honor(17, "初试的派派", "体验自定义模式", R.drawable.sticker_baby_pike, unlockCondition = "Play Custom Mode"),
+                Honor(18, "坚强的派派", "失败3次继续挑战", R.drawable.sticker_strong_bear, unlockCondition = "Resilience"),
+                Honor(19, "光速的派派", "5秒内完成挑战", R.drawable.sticker_rocket_pike, unlockCondition = "Super Speed"),
+                Honor(20, "王者派派", "解锁所有其他荣誉", R.drawable.sticker_king_pike, unlockCondition = "Collection Master"),
+                Honor(21, "奥特之光", "完成奥特曼特训", R.drawable.user_child_photo, unlockCondition = "Ultraman Training"),
+                
+                // Ultraman Expansion Honors (Updated images)
+                Honor(22, "贝利亚·逆袭", "通关 Level 1", R.drawable.photo_pike_gen_1, unlockCondition = "Ultraman L1"),
+                Honor(23, "赛罗·羁绊", "通关 Level 2", R.drawable.photo_pike_gen_2, unlockCondition = "Ultraman L2"),
+                Honor(24, "艾斯·热忱", "通关 Level 3", R.drawable.photo_pike_gen_3, unlockCondition = "Ultraman L3"),
+                Honor(25, "光之纽带", "无尽模式高分", R.drawable.photo_pike_gen_4, unlockCondition = "Endless 100+"),
+                Honor(26, "英雄传承", "特训大师", R.drawable.photo_pike_gen_1, unlockCondition = "Mastery")
+            )
+
+            val existingList = honorDao.getAllHonors().first()
+            val existingIds = existingList.map { it.id }.toSet()
+            
+            // 1. Insert Missing
+            val missingHonors = initialHonors.filter { it.id !in existingIds }
+            if (missingHonors.isNotEmpty()) {
+                honorDao.insertHonors(missingHonors)
+            }
+            
+            // 2. Force Update Ultraman Honors (22-26) to fix images
+            // We need to check if they exist, and if their imageResId is WRONG.
+            // But simplify: Just update 22-26 if they exist.
+            // Note: Update requires valid Honor object with ID.
+            val toUpdate = initialHonors.filter { it.id in 22..26 && it.id in existingIds }
+            toUpdate.forEach { newHonor ->
+                // Preserve 'isUnlocked' state!
+                val oldHonor = existingList.find { it.id == newHonor.id }
+                if (oldHonor != null) {
+                    honorDao.updateHonor(newHonor.copy(isUnlocked = oldHonor.isUnlocked))
+                }
             }
         }
     }

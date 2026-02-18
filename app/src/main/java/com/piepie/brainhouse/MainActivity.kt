@@ -19,6 +19,9 @@ import com.piepie.brainhouse.game.blindbox.BlindBoxGameScreen
 import com.piepie.brainhouse.game.blindbox.BlindBoxLevelConfig
 import com.piepie.brainhouse.game.schulte.SchulteGameScreen
 import com.piepie.brainhouse.game.schulte.SchulteLevelConfig
+import com.piepie.brainhouse.game.ultraman.UltramanMenuScreen
+import com.piepie.brainhouse.game.ultraman.UltramanScreen
+import com.piepie.brainhouse.game.ultraman.UltramanViewModel
 import com.piepie.brainhouse.ui.CustomModeScreen
 import com.piepie.brainhouse.ui.GameDataViewModel
 import com.piepie.brainhouse.ui.HallOfFameScreen
@@ -30,6 +33,7 @@ import com.piepie.brainhouse.util.SoundManager
 class MainActivity : ComponentActivity() {
     private lateinit var soundManager: SoundManager
     private val gameViewModel: GameDataViewModel by viewModels()
+    private val ultramanViewModel: UltramanViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +64,55 @@ class MainActivity : ComponentActivity() {
                         composable("game_select") {
                             LevelSelectSyncScreen(
                                 onLevelSelected = { gameType, level ->
-                                    navController.navigate("game/${gameType}/${level}")
+                                    if (gameType == "ULTRAMAN") {
+                                        navController.navigate("ultraman_menu")
+                                    } else {
+                                        navController.navigate("game/${gameType}/${level}")
+                                    }
                                 },
                                 onBack = { navController.popBackStack() }
                             )
                         }
                         
+                        composable("ultraman_menu") {
+                            UltramanMenuScreen(
+                                viewModel = ultramanViewModel,
+                                onBack = { navController.popBackStack() },
+                                onStartLevel = { levelId, isEndless ->
+                                    navController.navigate("ultraman_game/$levelId/$isEndless")
+                                }
+                            )
+                        }
+                        
+                        composable(
+                            "ultraman_game/{level}/{endless}",
+                            arguments = listOf(
+                                navArgument("level") { type = NavType.IntType },
+                                navArgument("endless") { type = NavType.BoolType }
+                            )
+                        ) { backStackEntry ->
+                            val level = backStackEntry.arguments?.getInt("level") ?: 1
+                            val endless = backStackEntry.arguments?.getBoolean("endless") ?: false
+                            
+                            UltramanScreen(
+                                levelId = level,
+                                isEndless = endless,
+                                viewModel = ultramanViewModel,
+                                onBack = { navController.popBackStack() },
+                                onNextLevel = {
+                                    if (level < 3) {
+                                        navController.navigate("ultraman_game/${level + 1}/$endless") {
+                                            popUpTo("ultraman_game/$level/$endless") { inclusive = true }
+                                        }
+                                    } else {
+                                        navController.popBackStack()
+                                    }
+                                },
+                                onUnlockHonor = { id -> gameViewModel.unlockHonor(id) },
+                                soundManager = soundManager
+                            )
+                        }
+
                         composable("custom_mode") {
                             CustomModeScreen(
                                 onExit = { navController.popBackStack() },

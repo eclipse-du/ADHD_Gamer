@@ -70,10 +70,31 @@ class SoundManager(private val context: Context) : TextToSpeech.OnInitListener {
         // soundPool?.play(clickSoundId, 1f, 1f, 0, 0, 1f)
     }
 
+    private var voicePlayer: MediaPlayer? = null
+
+    fun playVoice(resId: Int) {
+        try {
+            voicePlayer?.release() // Stop previous
+            voicePlayer = null
+            
+            voicePlayer = MediaPlayer.create(context, resId)
+            voicePlayer?.start()
+            voicePlayer?.setOnCompletionListener { mp ->
+                mp.release()
+                if (voicePlayer == mp) {
+                    voicePlayer = null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("SoundManager", "Failed to play voice: $resId", e)
+        }
+    }
+
     fun release() {
         tts?.stop()
         tts?.shutdown()
         mediaPlayer?.release()
+        voicePlayer?.release()
         soundPool?.release()
     }
 }

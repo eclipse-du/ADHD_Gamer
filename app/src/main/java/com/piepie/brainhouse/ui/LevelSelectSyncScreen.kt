@@ -82,7 +82,7 @@ fun LevelSelectSyncScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Carousel
-            val pagerState = rememberPagerState(pageCount = { 2 })
+            val pagerState = rememberPagerState(pageCount = { 3 })
             
             HorizontalPager(
                 state = pagerState,
@@ -122,7 +122,7 @@ fun LevelSelectSyncScreen(
                             iconEmoji = "🦉", // or Owl
                             onClick = { onLevelSelected("SCHULTE", 1) }
                         )
-                    } else {
+                    } else if (page == 1) {
                         GameModeCardLarge(
                             title = "盲盒记忆",
                             subtitle = "Blind Box Memory",
@@ -130,6 +130,15 @@ fun LevelSelectSyncScreen(
                             color = MacaronPink,
                             iconEmoji = "🎁", // or Cat/Box
                             onClick = { onLevelSelected("BLINDBOX", 1) }
+                        )
+                    } else {
+                        GameModeCardLarge(
+                            title = "奥特曼特训",
+                            subtitle = "Ultraman Agility",
+                            desc = "敏捷力训练\n通过快速反应，守护光之国！",
+                            color = Color(0xFFE53935), // Ultraman Red
+                            iconEmoji = "🦸", // Ultraman
+                            onClick = { onLevelSelected("ULTRAMAN", 1) }
                         )
                     }
                 }
@@ -142,7 +151,7 @@ fun LevelSelectSyncScreen(
                 modifier = Modifier.height(50.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                repeat(2) { iteration ->
+                repeat(3) { iteration ->
                     val color = if (pagerState.currentPage == iteration) TextPrimary else TextSecondary.copy(alpha=0.3f)
                     Box(
                         modifier = Modifier
