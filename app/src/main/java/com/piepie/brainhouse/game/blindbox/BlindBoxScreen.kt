@@ -45,18 +45,18 @@ fun BlindBoxGameScreen(
     LaunchedEffect(levelId, customConfig) {
         val config = customConfig ?: BlindBoxLevels.getLevel(levelId)
         engine.startLevel(config)
-        soundManager?.speak("仔细观察打开的盲盒")
+        soundManager?.playVoice(com.piepie.brainhouse.R.raw.audio_blindbox_intro)
     }
 
     LaunchedEffect(gameState) {
         if (gameState == BlindBoxState.LEVEL_COMPLETE && !showCompleteDialog) {
             val result = engine.calculateResult()
             onLevelComplete(result.stars, result.timeMs)
-            soundManager?.speak("挑战完成！")
+            soundManager?.playVoice(com.piepie.brainhouse.R.raw.audio_blindbox_victory)
             showCompleteDialog = true
         }
         if (gameState == BlindBoxState.QUESTION_TIME) {
-            soundManager?.speak("请回答问题")
+            soundManager?.playVoice(com.piepie.brainhouse.R.raw.audio_blindbox_question)
         }
     }
 

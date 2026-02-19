@@ -51,7 +51,7 @@ fun SchulteGameScreen(
     LaunchedEffect(levelId, customConfig) {
         val config = customConfig ?: SchulteLevels.getLevel(levelId)
         engine.startLevel(config)
-        soundManager?.speak("找到数字 1")
+        soundManager?.playVoice(com.piepie.brainhouse.R.raw.audio_schulte_intro)
     }
 
     // Effect for completion
@@ -59,7 +59,7 @@ fun SchulteGameScreen(
         if (gameState == SchulteGameState.COMPLETED && !showCompleteDialog) {
             val stars = engine.calculateStars()
             onLevelComplete(stars, timeElapsed)
-            soundManager?.speak("太棒了！挑战成功！")
+            soundManager?.playVoice(com.piepie.brainhouse.R.raw.audio_schulte_victory)
             showCompleteDialog = true // Show dialog instead of exiting
         }
     }
