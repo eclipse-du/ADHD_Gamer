@@ -82,7 +82,7 @@ fun LevelSelectSyncScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Carousel
-            val pagerState = rememberPagerState(pageCount = { 3 })
+            val pagerState = rememberPagerState(pageCount = { 6 })
             
             HorizontalPager(
                 state = pagerState,
@@ -131,7 +131,7 @@ fun LevelSelectSyncScreen(
                             iconEmoji = "🎁", // or Cat/Box
                             onClick = { onLevelSelected("BLINDBOX", 1) }
                         )
-                    } else {
+                    } else if (page == 2) {
                         GameModeCardLarge(
                             title = "奥特曼特训",
                             subtitle = "Ultraman Agility",
@@ -139,6 +139,33 @@ fun LevelSelectSyncScreen(
                             color = Color(0xFFE53935), // Ultraman Red
                             iconEmoji = "🦸", // Ultraman
                             onClick = { onLevelSelected("ULTRAMAN", 1) }
+                        )
+                    } else if (page == 3) {
+                        GameModeCardLarge(
+                            title = "寻找宝箱",
+                            subtitle = "Treasure Hunt",
+                            desc = "专注力挑战\n记住宝箱位置，连续找到就会升级。",
+                            color = Color(0xFFFFA726),
+                            iconEmoji = "💎",
+                            onClick = { onLevelSelected("TREASURE", 1) }
+                        )
+                    } else if (page == 4) {
+                        GameModeCardLarge(
+                            title = "找不同",
+                            subtitle = "Spot Difference",
+                            desc = "观察力挑战\n左右对比，找到不一样的地方。",
+                            color = Color(0xFF66BB6A),
+                            iconEmoji = "🔍",
+                            onClick = { onLevelSelected("SPOTDIFF", 1) }
+                        )
+                    } else {
+                        GameModeCardLarge(
+                            title = "听词反应",
+                            subtitle = "Word Reaction",
+                            desc = "听觉专注力挑战\n听到目标词后 3 秒内按下按钮。",
+                            color = Color(0xFF42A5F5),
+                            iconEmoji = "🎧",
+                            onClick = { onLevelSelected("WORD_REACTION", 1) }
                         )
                     }
                 }
@@ -151,7 +178,7 @@ fun LevelSelectSyncScreen(
                 modifier = Modifier.height(50.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                repeat(3) { iteration ->
+                repeat(6) { iteration ->
                     val color = if (pagerState.currentPage == iteration) TextPrimary else TextSecondary.copy(alpha=0.3f)
                     Box(
                         modifier = Modifier

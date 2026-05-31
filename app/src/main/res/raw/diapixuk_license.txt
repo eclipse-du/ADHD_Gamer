@@ -1,0 +1,5 @@
+DiapixUK picture materials
+Source: https://zenodo.org/records/3703202
+Authors: Valerie Hazan and Rachel Baker, UCL
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Reference: Baker, R., and Hazan, V. (2011). DiapixUK: Task materials for the elicitation of multiple spontaneous speech dialogs. Behavior Research Methods Instrumentation 43, 761-770. https://doi.org/10.3758/s13428-011-0075-y

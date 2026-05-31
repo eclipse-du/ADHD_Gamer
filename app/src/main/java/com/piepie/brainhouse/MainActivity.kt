@@ -19,9 +19,13 @@ import com.piepie.brainhouse.game.blindbox.BlindBoxGameScreen
 import com.piepie.brainhouse.game.blindbox.BlindBoxLevelConfig
 import com.piepie.brainhouse.game.schulte.SchulteGameScreen
 import com.piepie.brainhouse.game.schulte.SchulteLevelConfig
+import com.piepie.brainhouse.game.spotdifference.SpotDifferenceScreen
+import com.piepie.brainhouse.game.treasurehunt.TreasureHuntConfig
+import com.piepie.brainhouse.game.treasurehunt.TreasureHuntScreen
 import com.piepie.brainhouse.game.ultraman.UltramanMenuScreen
 import com.piepie.brainhouse.game.ultraman.UltramanScreen
 import com.piepie.brainhouse.game.ultraman.UltramanViewModel
+import com.piepie.brainhouse.game.wordreaction.WordReactionScreen
 import com.piepie.brainhouse.ui.CustomModeScreen
 import com.piepie.brainhouse.ui.GameDataViewModel
 import com.piepie.brainhouse.ui.HallOfFameScreen
@@ -116,8 +120,8 @@ class MainActivity : ComponentActivity() {
                         composable("custom_mode") {
                             CustomModeScreen(
                                 onExit = { navController.popBackStack() },
-                                onStartGame = { type, p1, _ ->
-                                    navController.navigate("game_custom/$type/$p1") 
+                                onStartGame = { type, p1, p2 ->
+                                    navController.navigate("game_custom/$type/$p1/$p2")
                                 },
                                 soundManager = soundManager
                             )
@@ -165,7 +169,7 @@ class MainActivity : ComponentActivity() {
                                     onNextLevel = ::onNextLevel,
                                     soundManager = soundManager
                                 )
-                            } else {
+                            } else if (type == "BLINDBOX") {
                                 BlindBoxGameScreen(
                                     levelId = level,
                                     onExit = { navController.popBackStack() },
@@ -176,19 +180,54 @@ class MainActivity : ComponentActivity() {
                                     onNextLevel = ::onNextLevel,
                                     soundManager = soundManager
                                 )
+                            } else if (type == "TREASURE") {
+                                TreasureHuntScreen(
+                                    levelId = level,
+                                    onExit = { navController.popBackStack() },
+                                    onSessionComplete = { reachedLevel, score ->
+                                        gameViewModel.saveRecord(
+                                            LevelRecord("TREASURE", reachedLevel, 3, score.toLong())
+                                        )
+                                    },
+                                    soundManager = soundManager
+                                )
+                            } else if (type == "WORD_REACTION") {
+                                WordReactionScreen(
+                                    levelId = level,
+                                    onExit = { navController.popBackStack() },
+                                    onSessionComplete = { score, _ ->
+                                        gameViewModel.saveRecord(
+                                            LevelRecord("WORD_REACTION", level, 3, score.toLong())
+                                        )
+                                    },
+                                    soundManager = soundManager
+                                )
+                            } else {
+                                SpotDifferenceScreen(
+                                    levelId = level,
+                                    onExit = { navController.popBackStack() },
+                                    onLevelComplete = { stars, found ->
+                                        gameViewModel.saveRecord(
+                                            LevelRecord("SPOTDIFF", level, stars, found)
+                                        )
+                                    },
+                                    soundManager = soundManager
+                                )
                             }
                         }
                         
                         // Custom Game Route
                         composable(
-                            "game_custom/{type}/{param}",
+                            "game_custom/{type}/{param1}/{param2}",
                              arguments = listOf(
                                 navArgument("type") { type = NavType.StringType },
-                                navArgument("param") { type = NavType.IntType }
+                                navArgument("param1") { type = NavType.IntType },
+                                navArgument("param2") { type = NavType.IntType }
                             )
                         ) { backStackEntry ->
                             val type = backStackEntry.arguments?.getString("type")
-                            val param = backStackEntry.arguments?.getInt("param") ?: 3
+                            val param1 = backStackEntry.arguments?.getInt("param1") ?: 3
+                            val param2 = backStackEntry.arguments?.getInt("param2") ?: 2
                             
                             LaunchedEffect(Unit) {
                                 gameViewModel.unlockCustomModeHonor()
@@ -201,7 +240,7 @@ class MainActivity : ComponentActivity() {
                             if (type == "SCHULTE") {
                                 val config = SchulteLevelConfig(
                                     levelId = -1,
-                                    gridSize = param,
+                                    gridSize = param1,
                                     timeLimitSec = 999,
                                     star3TimeSec = 10, 
                                     star2TimeSec = 20
@@ -214,10 +253,22 @@ class MainActivity : ComponentActivity() {
                                     onNextLevel = ::onNextLevelCustom,
                                     soundManager = soundManager
                                 )
+                            } else if (type == "TREASURE") {
+                                val config = TreasureHuntConfig(
+                                    maxCells = param1,
+                                    distance = param2
+                                )
+                                TreasureHuntScreen(
+                                    levelId = -1,
+                                    customConfig = config,
+                                    onExit = { navController.popBackStack() },
+                                    onSessionComplete = { _, _ -> },
+                                    soundManager = soundManager
+                                )
                             } else {
                                 val config = BlindBoxLevelConfig(
                                     levelId = -1,
-                                    boxCount = param,
+                                    boxCount = param1,
                                     memorizeTimeSec = 10 
                                 )
                                 BlindBoxGameScreen(

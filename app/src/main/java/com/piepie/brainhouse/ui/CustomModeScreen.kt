@@ -30,12 +30,21 @@ fun CustomModeScreen(
     onStartGame: (String, Int, Int) -> Unit, // type, param1, param2
     soundManager: SoundManager? = null
 ) {
-    var selectedGame by remember { mutableStateOf("SCHULTE") } // SCHULTE or BLINDBOX
+    var selectedGame by remember { mutableStateOf("SCHULTE") }
     var param1 by remember { mutableStateOf(3) } // Grid Size / Box Count
+    var param2 by remember { mutableStateOf(2) } // Treasure distance
     
     // Limits
-    val minParam = if (selectedGame == "SCHULTE") 2 else 3
-    val maxParam = if (selectedGame == "SCHULTE") 6 else 12
+    val minParam = when (selectedGame) {
+        "SCHULTE" -> 2
+        "TREASURE" -> 1
+        else -> 3
+    }
+    val maxParam = when (selectedGame) {
+        "SCHULTE" -> 6
+        "TREASURE" -> 12
+        else -> 12
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(CreamBackground)) {
         Column(
@@ -75,6 +84,11 @@ fun CustomModeScreen(
                 GameOptionTab("盲盒记忆", selectedGame == "BLINDBOX") { 
                     selectedGame = "BLINDBOX"
                     param1 = 4 
+                }
+                GameOptionTab("寻找宝箱", selectedGame == "TREASURE") {
+                    selectedGame = "TREASURE"
+                    param1 = 5
+                    param2 = 2
                 }
             }
             
@@ -121,7 +135,7 @@ fun CustomModeScreen(
                                 }
                             }
                         }
-                    } else {
+                    } else if (selectedGame == "BLINDBOX") {
                         // Blind Box Preview
                         val boxCount = param1
                         // Arrange roughly in a grid
@@ -149,6 +163,33 @@ fun CustomModeScreen(
                                 }
                             }
                         }
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(6),
+                            horizontalArrangement = Arrangement.spacedBy(3.dp),
+                            verticalArrangement = Arrangement.spacedBy(3.dp),
+                            userScrollEnabled = false,
+                            modifier = Modifier.aspectRatio(1f).fillMaxSize()
+                        ) {
+                            items(36) { index ->
+                                val color = when (index) {
+                                    30 -> Color(0xFFE53935)
+                                    39, 40 -> Color(0xFF2196F3)
+                                    else -> MacaronBlue.copy(alpha = 0.15f)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .background(color, RoundedCornerShape(4.dp))
+                                        .border(1.dp, TextSecondary.copy(alpha = 0.16f), RoundedCornerShape(4.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (index == 30) {
+                                        Text("宝", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -157,7 +198,11 @@ fun CustomModeScreen(
             
             // Config Controls
             Text(
-                if (selectedGame == "SCHULTE") "格子数量: ${param1}x${param1}" else "盒子数量: $param1", 
+                when (selectedGame) {
+                    "SCHULTE" -> "格子数量: ${param1}x${param1}"
+                    "TREASURE" -> "最大宝箱: $param1 格"
+                    else -> "盒子数量: $param1"
+                },
                 style = MaterialTheme.typography.titleMedium,
                 color = TextPrimary
             )
@@ -186,13 +231,48 @@ fun CustomModeScreen(
                     Text("+", fontSize = 32.sp, color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
+
+            if (selectedGame == "TREASURE") {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    "红蓝间隔: $param2",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = TextPrimary
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    IconButton(
+                        onClick = { if (param2 > 2) param2-- },
+                        modifier = Modifier
+                            .size(52.dp)
+                            .background(MacaronGreen, CircleShape)
+                    ) {
+                        Text("-", fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+
+                    IconButton(
+                        onClick = { if (param2 < 8) param2++ },
+                        modifier = Modifier
+                            .size(52.dp)
+                            .background(WarmOrange, CircleShape)
+                    ) {
+                        Text("+", fontSize = 30.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
             
             Spacer(modifier = Modifier.height(24.dp))
             
             Button(
                 onClick = {
                     soundManager?.playClick()
-                    onStartGame(selectedGame, param1, 0)
+                    onStartGame(selectedGame, param1, if (selectedGame == "TREASURE") param2 else 0)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -211,7 +291,7 @@ fun CustomModeScreen(
 fun GameOptionTab(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .width(140.dp)
+            .width(100.dp)
             .height(48.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(if (isSelected) MacaronBlue else Color.Transparent)
@@ -222,7 +302,7 @@ fun GameOptionTab(text: String, isSelected: Boolean, onClick: () -> Unit) {
             text, 
             color = if (isSelected) Color.White else TextSecondary,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            fontSize = 14.sp
         )
     }
 }
